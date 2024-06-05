@@ -22,6 +22,7 @@ from django.conf import settings # type: ignore
 urlpatterns =[
     path('admin/', admin.site.urls),
     path('', include('BestStore.urls')),
-    path('cart/', include('carts.urls'))
+    path('cart/', include('carts.urls')),
+    path('accounts/', include('accounts.urls'))
 
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
