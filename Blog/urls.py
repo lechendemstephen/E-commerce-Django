@@ -23,6 +23,8 @@ urlpatterns =[
     path('admin/', admin.site.urls),
     path('', include('BestStore.urls')),
     path('cart/', include('carts.urls')),
-    path('accounts/', include('accounts.urls'))
+    path('accounts/', include('accounts.urls')),
+    # orders
+    path('orders/', include('orders.urls')),
 
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

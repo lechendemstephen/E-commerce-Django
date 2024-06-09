@@ -5,13 +5,14 @@
 <section class="section-content padding-y bg">
     <div class="container">
     
+     {% include "BestStore/includes/alerts.html" %}
     <!-- ============================ COMPONENT 1 ================================= -->
     <div class="row">
         <aside class="col-lg-6">
     <div class="card">
     <div class="card-body">
     <h4 class="card-title">Billing Address</h4>
-    <form action="" method="POST">
+    <form action="{% url 'place_order' %}" method="POST">
         {% csrf_token %}
         <div class="form-row">
             <div class="col form-group">
@@ -30,17 +31,17 @@
             </div>
             <div class="col form-group">
                 <label for="">Phone number</label>
-                <input type="text" name="phone_number" class="form-control" required>
+                <input type="text" name="phone" class="form-control" required>
             </div>
         </div>
         <div class="form-row">
             <div class="col form-group">
                 <label for="">Address line 1 </label>
-                <input type="text" name="address_1" class="form-control" required>
+                <input type="text" name="address_line_1" class="form-control" required>
             </div>
             <div class="col form-group">
                 <label for="">Address line 2</label>
-                <input type="text" name="address_2" class="form-control" >
+                <input type="text" name="address_line_2" class="form-control" >
             </div>
         </div>
         <div class="form-row">
