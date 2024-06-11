@@ -9,6 +9,7 @@ from carts.models import CartItem
 
 
 def payments(request): 
+    
 
     return render(request, 'BestStore/orders/payment.html')
 
