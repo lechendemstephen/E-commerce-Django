@@ -14,9 +14,10 @@ from store.models import ReviewRating
 # Home url
 def home(request): 
      products = Product.objects.all().filter(is_available=True)
-
+     #review_rating = ReviewRating.objects.filter(product_id=products, status=True)
      context = {
-          'products': products
+          'products': products,
+          
      }
      return render(request, 'BestStore/home.html', context)
 
@@ -38,11 +39,14 @@ def store(request, category_slug=None):
         page = request.GET.get('page') # getting the page number from the browser
         page_products = paginator.get_page(page)   
         product_count = products.count()
+     
+    
 
      context = {
           'categories': Category.objects.all(),
           'products': page_products,
-          'product_count': product_count
+          'product_count': product_count,
+          
      }
      return render(request, 'BestStore/store/store.html', context)
 def product_detail(request, category_slug, product_slug): 

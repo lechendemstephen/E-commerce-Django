@@ -1,6 +1,6 @@
-from django.shortcuts import render, redirect # type: ignore
-from .forms import RegistrationForm
-from .models import Account
+from django.shortcuts import render, redirect, get_object_or_404 # type: ignore
+from .forms import RegistrationForm, UserForm, UserProfileForm
+from .models import Account, UserProfile
 from django.http import HttpResponse # type: ignore
 from django.contrib import messages, auth # type: ignore
 from django.contrib.auth.decorators import login_required # type: ignore
@@ -31,6 +31,13 @@ def register(request):
             )
             user.phone = form.cleaned_data['phone']
             user.save()
+            
+            # create user profile 
+            profile = UserProfile()
+            profile.user_id = user.id 
+
+            profile.profile_picture = 'default/default-user.png'
+            profile.save()
 
             # User Activation email system 
             current_site = get_current_site(request)
@@ -46,7 +53,7 @@ def register(request):
             send_email.send()
 
             #messages.success(request, 'We have sent you a verification email please verify ')
-            return redirect('accounts/login/?command=verification&email=' +email)
+            return redirect('accounts/login/?command=verification&email=' + email)
            
     else: 
           form = RegistrationForm()
@@ -215,3 +222,56 @@ def reset_password(request):
                return redirect('reset_password')
      else:          
       return render(request, 'BestStore/accounts/reset_password.html')
+     
+
+def my_orders(request): 
+
+     return render(request, 'BestStore/accounts/my_orders.html')
+
+
+@login_required(login_url='login')
+def edit_profile(request): 
+     userprofile = get_object_or_404(UserProfile, user=request.user)
+     if request.method == "POST": 
+          user_form = UserForm(request.POST, instance=request.user)
+          profile_form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
+          if user_form.is_valid() and profile_form.is_valid(): 
+               user_form.save()
+               profile_form.save()
+               messages.success(request, 'Your profile has been update')
+               return redirect('edit_profile')
+     else: 
+          user_form = UserForm(instance=request.user) 
+          profile_form = UserProfileForm(instance=userprofile) 
+     context = {
+          'user_form': user_form,
+          'profile_form': profile_form,
+          'user_profile':  userprofile,
+
+     }  
+
+     return render(request, 'BestStore/accounts/edit_profile.html', context)
+
+@login_required(login_url='login')
+def change_password(request):
+     if request.method == "POST": 
+          current_password = request.POST['current_password']
+          new_password = request.POST['new_password']
+          confirm_new_password = request.POST['confirm_new_password']
+
+          user = Account.objects.get(username__exact=request.user.username)
+
+          if new_password == confirm_new_password: 
+               success = user.check_password(current_password)
+               if success: 
+                    user.set_password(new_password)
+                    user.save()
+                    messages.success(request, 'Password updated successfully')
+                    return redirect('change_password')
+               else: 
+                    messages.error(request, 'Please enter valid current password')
+                    return redirect('change_password')
+          else: 
+               messages.error(request, 'password do not match')
+               return redirect('change_password')
+     return render(request, 'BestStore/accounts/change_password.html')
